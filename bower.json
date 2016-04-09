@@ -1,0 +1,21 @@
+{
+  "name": "neighborhood-map",
+  "homepage": "https://github.com/christopher-taylor/udacity-fend-neighborhoodMap",
+  "authors": [
+    "LiquidSwordsman <ctaylor@liquidswords.ninja>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "^3.4.0",
+    "underscore-ko": "^1.8.2"
+  }
+}
