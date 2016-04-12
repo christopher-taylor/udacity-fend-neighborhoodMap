@@ -124,14 +124,14 @@ var ViewModel = function() {
   var self = this;
   self.locations = ko.observableArray([]);
 
-  this.init = function(){
+  this.init = function() {
     locationData.forEach(function(location) {
       self.locations.push(new Location(location));
     });
   }
 
   this.getFilterTags = function() {
-    var filterTagList = [];
+    var filterTagList = [""];
     self.locations().forEach(function(location) {
       location.filterTags().forEach(function(tag) {
         if ($.inArray(tag, filterTagList) == -1) {
@@ -176,7 +176,7 @@ function initMap() {
   // console.log($(window).width());
   // if ($(window.width()) )
   // Create a map object and specify the DOM element for display.
-  var map = new google.maps.Map(document.getElementById('main'), {
+  var map = new google.maps.Map($("#main").get(0), {
     draggable: false,
     disableDefaultUI: true,
     center: myLatLng,
@@ -185,15 +185,47 @@ function initMap() {
     zoom: 15
   });
 
-  // Create a marker and set its position.
+  // Create markers and set their positions.
+  var markers = [];
   var marker;
   viewModel.locations().forEach(function(location) {
     marker = new google.maps.Marker({
       map: map,
+      tags: location.filterTags(),
       position: location.latLong(),
-      title: location.name()
+      title: location.name(),
+      animation: google.maps.Animation.DROP,
     });
+    marker.addListener('filter', function() {
+      var filterTag = $("#filter-box").val().toLowerCase();
+      if($.inArray(filterTag, viewModel.getFilterTags()) != -1){
+        markers.forEach(function(marker){
+          if($.inArray(filterTag, marker.tags) != -1){
+            marker.setVisible(true);
+          } else {
+            marker.setVisible(false);
+          }
+        });
+      }
+    });
+    marker.addListener('clear-filter', function(){
+      $("#filter-box").val("");
+      markers.forEach(function(marker){
+        marker.setVisible(true);
+      });
+      $("#clear-filter-btn").hide();
+    });
+    markers.push(marker);
   });
+
+  // Create a DOM listener that Goole maps can respond to.
+  google.maps.event.addDomListener($("#filter-btn").get(0), 'click', function() {
+    google.maps.event.trigger(marker, 'filter');
+    $("#clear-filter-btn").show();
+  });
+  google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function(){
+    google.maps.event.trigger(marker, 'clear-filter');
+  })
 };
 
 var substringMatcher = function(strs) {

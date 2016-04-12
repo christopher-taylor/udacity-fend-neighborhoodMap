@@ -14,19 +14,22 @@
 
 <body>
   <div class="container-fluid">
-    <div class="row">
-      <div class="input-group">
+      <div class="row input-group" id="filter-bar">
+        <span id="clear-filter-btn" class="input-group-btn btn-block" style="display:none;">
+          <button class="btn btn-primary" style="border-radius:0px !important;">
+            <span class="glyphicon glyphicon-remove"></span>&nbsp;
+          </button>
+        </span>
         <input type="text" class="form-control" id="filter-box" placeholder="Food, entertainment, thai, etc" />
         <span class="input-group-btn btn-block">
-          <button id="filter-btn" class="btn btn-primary">
+          <button id="filter-btn" class="btn btn-primary text-center">
             <span class="glyphicon glyphicon glyphicon-filter"></span> Filter
           </button>
-          <button id="hambuger-btn" class="btn btn-primary">
-            <span class="glyphicon glyphicon-menu-hamburger"></span> All Places
+          <button id="hambuger-btn" class="btn btn-primary" style="border-radius:0px !important;">
+            <span class="glyphicon glyphicon-menu-hamburger text-center"></span>&nbsp;
           </button>
         </span>
       </div>
-    </div>
     <!-- Loc.Elem WIP -->
     <!-- <div class="row">
       <div class="col-md-1 loc-elem-icon">
