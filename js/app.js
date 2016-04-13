@@ -1,17 +1,5 @@
-/**
- * THE CREDITS
- *
- * Typeahead functionality:
- * 		Twttier Team: https://github.com/twitter/typeahead.js
- * 		Nick P (integration w/ Bootstrap 3): http://stackoverflow.com/questions/18059161/css-issue-on-twitter-typeahead-with-bootstrap-3
- * 		Willie Wheeler (width fix): http://stackoverflow.com/questions/17957513/extending-the-width-of-bootstrap-typeahead-to-match-input-field
- *
- * FEATURING ME, for being so great!
- */
-
 //TODO: Create elem pane layout.
 //TODO: Foreach (knockout) create loc elems for each location as LIs
-//TODO: Rig up filter function and typeahead to the filter box to show hide URLs
 //TODO: Add the loc elems to a panel that slides down on hambuger press.
 //TODO: Create the info-pane-elem and all its apis
 //TODO: When a marker or locelem are clicked the info pane should open fullscreen
@@ -163,6 +151,11 @@ var View = {
     });
     $('.typeahead.input-sm').siblings('input.tt-hint').addClass('hint-small');
     $('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
+  },
+
+  displayLocElemPane: function() {
+    var div = "<div>";
+    // $("#main").prepend()
   }
 };
 
@@ -225,7 +218,7 @@ function initMap() {
   });
   google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function(){
     google.maps.event.trigger(marker, 'clear-filter');
-  })
+  });
 };
 
 var substringMatcher = function(strs) {

@@ -1,7 +1,22 @@
+#loc-elem-pane{
+  padding-top:20px;
+}
+
+.truncate {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.center-vertically {
+  position: relative;
+  top: 50%;
+  transform: translateY(+50%);
+}
+
 .loc-elem-icon{
-  display: table-cell;
   font-size: 20px;
-  vertical-align: middle;
   text-align:center;
 }
 .burger {
