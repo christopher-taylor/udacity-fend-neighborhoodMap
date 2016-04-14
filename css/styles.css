@@ -7,17 +7,26 @@
 }
 
 #loc-elem-pane{
+  height: calc(100% - 33px);
   position: absolute;
-  width: 100vw important!;
   top: -1500px;
   z-index: 1;
-  padding:10px 0px;
+  padding:0px;
   background-color: white;
-  overflow-y: scroll;
+}
+
+#loc-elem-holder{
+  height: calc(100% - 51px);
+  overflow-y: auto;
+}
+
+.loc-elem{
+  padding: 7.5px 10px;
 }
 
 #main{
   z-index: 0;
+  heigh: calc(100% -33px);
 }
 
 .truncate {
@@ -38,9 +47,6 @@
   padding-right: 0px;
   font-size: 20px;
   text-align:center;
-}
-.burger {
-  text-align: center;
 }
 .twitter-typeahead .tt-query, .twitter-typeahead .tt-hint {
     margin-bottom: 0;

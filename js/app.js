@@ -175,8 +175,7 @@ var View = {
 
   toggleLocElemPane: function() {
     if(!this.locElemPaneVisible){
-      $("#loc-elem-pane").height($(window).height() - $("#filter-bar").height());
-      $("#loc-elem-pane").animate({top: 0 + $("#filter-bar").height()}, 1500);
+      $("#loc-elem-pane").animate({top: 33}, 1000);
       this.locElemPaneVisible = true;
     } else{
       this.hideLocElemPane();
