@@ -190,7 +190,7 @@ var View = {
 
   favoriteLocation: function(id){
     viewModel.locations()[id].toggleFavorite();
-    $("#"+id + " > .glyphicon-star").toggleClass('favorite');
+    $("#"+id).find(".glyphicon-star").toggleClass('favorite');
     viewModel.sortLocations();
   }
 };

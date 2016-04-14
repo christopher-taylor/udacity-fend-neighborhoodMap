@@ -62,10 +62,10 @@
                 <span id="loc-adress" data-bind="text: $data.address"></span>
             </div>
             <div style="display:inline">
-                <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-star" onclick="View.favoriteLocation($(this).parent()[0].id)"></span>
+                <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-star" onclick="View.favoriteLocation($(this).parent().parent()[0].id)"></span>
             </div>
         </div>
-        <hr style="margin: 10px; width:100%;" />
+        <hr style="margin: 10px; width:90%;" />
         <!-- /ko -->
         </span>
         <span id="loc-elem-pane-chevron" class="glyphicon glyphicon-chevron-up text-center" style="width:100%; font-size: 18px;" onclick="View.hideLocElemPane();"></span>
