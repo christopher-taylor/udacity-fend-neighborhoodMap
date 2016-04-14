@@ -2,8 +2,22 @@
   color: #FFDF00;
 }
 
+#filter-bar{
+  z-index: 2;
+}
+
 #loc-elem-pane{
-  padding-top:20px;
+  position: absolute;
+  width: 100% important!;
+  top: -1000px;
+  z-index: 1;
+  padding:10px 0px;
+  background-color: white;
+  overflow-y: scroll;
+}
+
+#main{
+  z-index: 0;
 }
 
 .truncate {
