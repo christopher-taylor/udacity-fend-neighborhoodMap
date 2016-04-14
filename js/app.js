@@ -1,3 +1,7 @@
+// IMPORTANT
+// For attribution please see ../THE_CREDITS.js
+// /IMPORTANT
+
 //TODO: Create elem pane layout.
 //TODO: Foreach (knockout) create loc elems for each location as LIs
 //TODO: Add the loc elems to a panel that slides down on hambuger press.
@@ -9,7 +13,7 @@
  */
 var locationData = [{
   name: "Dick's Drive-In",
-  filterTags: ["food", "burgers", "american"],
+  filterTags: [undefined, "food", "burgers", "american"],
   flickrQuery: "dick's drive in Seattle",
   yelpURL: "http://www.yelp.com/biz/dicks-drive-in-seattle-4",
   address: "500 Queen Anne Ave N, Seattle, WA 9810",
@@ -17,7 +21,7 @@ var locationData = [{
   long: -122.356383
 }, {
   name: "Thai Heaven",
-  filterTags: ["food", "thai"],
+  filterTags: [undefined, "food", "thai"],
   flickrQuery: "thai heaven Seattle",
   yelpURL: "http: //www.yelp.com/biz/thai-heaven-seattle",
   address: "352 Roy St, Seattle, WA 98109",
@@ -25,7 +29,7 @@ var locationData = [{
   long: -122.349916
 }, {
   name: "Roti Cuisine of India",
-  filterTags: ["food", "indian"],
+  filterTags: [undefined, "food", "indian"],
   flickrQuery: "Roti Seattle",
   yelpURL: "http: //www.yelp.com/biz/roti-indian-cuisine-seattle",
   address: "530 Queen Anne Ave N, Seattle, WA 98109",
@@ -33,7 +37,7 @@ var locationData = [{
   long: -122.356371
 }, {
   name: "Bahn Thai",
-  filterTags: ["food", "thai"],
+  filterTags: [undefined, "food", "thai"],
   flickrQuery: "bahn thai restaurant Seattle",
   yelpURL: "http: //www.yelp.com/biz/bahn-thai-restaurant-seattle",
   address: "409 Roy St, Seattle, WA 98109",
@@ -41,7 +45,7 @@ var locationData = [{
   long: -122.348381
 }, {
   name: "Bamboo Garden",
-  filterTags: ["food", "chinese", "vegetarian"],
+  filterTags: [undefined, "food", "chinese", "vegetarian"],
   flickrQuery: "bamboo garden restaurant seattle",
   yelpURL: "http: //www.yelp.com/biz/bamboo-garden-vegetarian-cuisine-seattle",
   address: "364 Roy St, Seattle, WA 98109",
@@ -49,7 +53,7 @@ var locationData = [{
   long: -122.349461
 }, {
   name: "Seattle Center",
-  filterTags: ["entertainment", "outdoor", "kid friendly"],
+  filterTags: [undefined, "entertainment", "outdoor", "kid friendly"],
   flickrQuery: "seattle center",
   yelpURL: "http: //www.yelp.com/biz/seattle-center-seattle",
   address: "305 Harrison St, Seattle, WA 98109",
@@ -57,7 +61,7 @@ var locationData = [{
   long: -122.351643
 }, {
   name: "SIFF Cinema Uptown",
-  filterTags: ["entertainment"],
+  filterTags: [undefined, "entertainment"],
   flickrQuery: "siff cinema uptown",
   yelpURL: "http: //www.yelp.com/biz/siff-cinema-uptown-seattle",
   address: "511 Queen Anne Ave N, Seattle, WA 98109",
@@ -65,7 +69,7 @@ var locationData = [{
   long: -122.356978
 }, {
   name: "Experience Music Project Museum",
-  filterTags: ["entertainment", "music"],
+  filterTags: [undefined, "entertainment", "music"],
   flickrQuery: "experience music project",
   yelpURL: "http: //www.yelp.com/biz/emp-museum-seattle",
   address: "325 5 th Ave N, Seattle, WA 98109",
@@ -73,7 +77,7 @@ var locationData = [{
   long: -122.348518
 }, {
   name: "McCaw Hall",
-  filterTags: ["entertainment", "performing arts", "art", "arts", "ballet"],
+  filterTags: [undefined, "entertainment", "performing arts", "art", "arts", "ballet"],
   flickrQuery: "mccaw hall seattle",
   yelpURL: "http: //www.yelp.com/biz/marion-oliver-mccaw-hall-seattle",
   address: "321 Mercer St, Seattle, WA 98109",
@@ -81,7 +85,7 @@ var locationData = [{
   long: -122.350088
 }, {
   name: "Seattle Children's Theater",
-  filterTags: ["entertainment", "performing arts", "art", "arts", "theater"],
+  filterTags: [undefined, "entertainment", "performing arts", "art", "arts", "theater"],
   flickrQuery: "seattle children 's theater",
   yelpURL: "http: //www.yelp.com/biz/seattle-childrens-theatre-seattle",
   address: "201 Thomas St, Seattle, WA 98109",
@@ -91,6 +95,7 @@ var locationData = [{
 
 var Location = function(data) {
   this.name = ko.observable(data.name);
+  this.favorite = ko.observable(false);
   this.filterTags = ko.observableArray(data.filterTags);
   this.lat = ko.observable(data.lat);
   this.long = ko.observable(data.long);
@@ -100,18 +105,23 @@ var Location = function(data) {
       lng: this.long()
     };
   }, this);
+  this.marker = ko.observable(undefined);
   this.flickrQuery = ko.observable(data.flickrQuery);
   this.yelpURL = ko.observable(data.yelpURL);
   this.address = ko.observable(data.address);
   this.nickname = ko.observable(data.nickname);
 
+  this.toggleFavorite = function(){
+    this.favorite(!this.favorite());
+    this.marker().label = "!";
+  }
 }
 
 
 var ViewModel = function() {
   var self = this;
   self.locations = ko.observableArray([]);
-
+  self.activeFilter = ko.observable(undefined);
   this.init = function() {
     locationData.forEach(function(location) {
       self.locations.push(new Location(location));
@@ -128,6 +138,14 @@ var ViewModel = function() {
       });
     });
     return filterTagList;
+  };
+
+  this.sortLocations = function(){
+    self.locations(self.locations().slice().sort(self.locationComparator));
+  };
+
+  this.locationComparator = function(x, y){
+    return (x.favorite() === y.favorite()) ? 0 : x.favorite() ? -1 : 1;
   };
 };
 
@@ -153,9 +171,13 @@ var View = {
     $('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
   },
 
-  displayLocElemPane: function() {
-    var div = "<div>";
-    // $("#main").prepend()
+  toggleLocElem: function() {
+  },
+
+  favoriteLocation: function(id){
+    viewModel.locations()[id].toggleFavorite();
+    $("#"+id + " > .glyphicon-star").toggleClass('favorite');
+    viewModel.sortLocations();
   }
 };
 
@@ -189,34 +211,43 @@ function initMap() {
       title: location.name(),
       animation: google.maps.Animation.DROP,
     });
+
     marker.addListener('filter', function() {
-      var filterTag = $("#filter-box").val().toLowerCase();
-      if($.inArray(filterTag, viewModel.getFilterTags()) != -1){
+      var filter = viewModel.activeFilter();
+
         markers.forEach(function(marker){
-          if($.inArray(filterTag, marker.tags) != -1){
+          // Toggle visibility as needed.
+          if($.inArray(filter, marker.tags) != -1){
             marker.setVisible(true);
           } else {
             marker.setVisible(false);
           }
         });
-      }
     });
     marker.addListener('clear-filter', function(){
       $("#filter-box").val("");
       markers.forEach(function(marker){
         marker.setVisible(true);
       });
+      viewModel.activeFilter(undefined);
       $("#clear-filter-btn").hide();
     });
     markers.push(marker);
+    location.marker(marker);
   });
 
   // Create a DOM listener that Goole maps can respond to.
   google.maps.event.addDomListener($("#filter-btn").get(0), 'click', function() {
-    google.maps.event.trigger(marker, 'filter');
-    $("#clear-filter-btn").show();
+    var filter = $("#filter-box").val().toLowerCase();
+
+    // If this is a valid filter tag
+    if($.inArray(filter, viewModel.getFilterTags()) != -1){
+      viewModel.activeFilter(filter);
+      google.maps.event.trigger(marker, 'filter');
+      $("#clear-filter-btn").show();
+    }
   });
-  google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function(){
+    google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function(){
     google.maps.event.trigger(marker, 'clear-filter');
   });
 };
