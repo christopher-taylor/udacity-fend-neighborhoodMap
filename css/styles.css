@@ -1,65 +1,79 @@
-.favorite{
-  color: #FFDF00;
+.img-viewport {
+    margin: 5px;
+    width: calc(20% - 30px);
+    height: 15vh;
+    display: inline-block;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
-
-#filter-bar{
-  z-index: 2;
+.favorite {
+    color: #FFDF00;
 }
-
-#loc-elem-pane{
-  height: calc(100% - 33px);
-  position: absolute;
-  top: -1500px;
-  z-index: 1;
-  padding:0px;
-  background-color: white;
+#filter-bar {
+    z-index: 2;
 }
-
-#loc-elem-holder{
-  height: calc(100% - 51px);
-  overflow-y: auto;
+#info-pane {
+    margin: 0px;
+    background-color: white;
+    width: 100%;
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: -2500px;
 }
-
-.loc-elem{
-  padding: 7.5px 10px;
+#info-pane-holder {
+    text-align: center;
 }
-
-#main{
-  z-index: 0;
-  heigh: calc(100% -33px);
+#loc-elem-pane {
+    will-change: top;
+    height: calc(100% - 33px);
+    position: absolute;
+    top: -1500px;
+    z-index: 1;
+    padding: 0px;
+    background-color: white;
 }
-
+#loc-elem-holder {
+    height: calc(100% - 51px);
+    overflow-y: auto;
+}
+.loc-elem {
+    padding: 7.5px 10px;
+}
+#main {
+    z-index: 0;
+    heigh: calc(100% -33px);
+}
 .truncate {
-  margin-right: 0px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    margin-right: 0px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
 .center-vertically {
-  position: relative;
-  top: 50%;
-  transform: translateY(+50%);
+    position: relative;
+    top: 50%;
+    transform: translateY(+50%);
 }
-
-.loc-elem-icon{
-  padding-left: 0px;
-  padding-right: 0px;
-  font-size: 20px;
-  text-align:center;
+.loc-elem-icon {
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: 20px;
+    text-align: center;
 }
 .twitter-typeahead .tt-query, .twitter-typeahead .tt-hint {
     margin-bottom: 0;
 }
 .twitter-typeahead .tt-hint {
     display: block;
-    background-color:white;
+    background-color: white;
     height: 34px;
     padding: 6px 12px;
     font-size: 14px;
     line-height: 1.428571429;
     border: 1px solid transparent;
-    border-radius:4px;
+    border-radius: 4px;
 }
 .twitter-typeahead .hint-small {
     height: 30px;
@@ -107,7 +121,7 @@
     background-image: -o-linear-gradient(top, #0088cc, #0077b3);
     background-image: linear-gradient(to bottom, #0088cc, #0077b3);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
 }
 .tt-suggestion.tt-is-under-cursor a {
     color: #fff;
@@ -115,4 +129,6 @@
 .tt-suggestion p {
     margin: 0;
 }
-.twitter-typeahead, .tt-hint, .tt-input, .tt-menu { width: 100%; }
+.twitter-typeahead, .tt-hint, .tt-input, .tt-menu {
+    width: 100%;
+}
