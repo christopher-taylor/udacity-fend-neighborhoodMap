@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div class="container-fluid" style="overflow:hidden; position:relative">
+    <div class="container-fluid" style="position:relative">
         <div class="row input-group" id="filter-bar">
             <span id="clear-filter-btn" class="input-group-btn btn-block" style="display:none;">
                 <button class="btn btn-primary" style="border-radius:0px !important;">
@@ -32,7 +32,7 @@
             </span>
         </div>
         <div id="info-pane" class="row">
-            <div id="info-pane-holder" class="col-xs-11">
+            <div id="info-pane-holder" class="col-xs-11" style="overflow-y: auto">
                 <h4 style="text-align: left">Photos From Flickr</h4>
                 <div id="flickr-photos" class="row">
                 </div>
@@ -41,7 +41,7 @@
                 <div id="google-review-holder"></div>
             </div>
             <div id="info-pane-chevron" class="col-xs-1">
-                <span id="close-info-chevron" class="glyphicon glyphicon-chevron-left center-vertically text-center" style="font-size: 50px;" onclick="View.toggleLocInfoPane()"></span>
+                <span id="close-info-chevron" class="glyphicon glyphicon-chevron-left center-vertically text-center" onclick="View.toggleLocInfoPane()"></span>
             </div>
         </div>
         <div class="row">

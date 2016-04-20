@@ -1,5 +1,13 @@
+#google-review-holder{
+    height: calc(100% - 119px);
+}
+#close-info-chevron{
+    position: fixed;
+    top: calc(50% - 50px);
+    font-size: 50px;
+}
 .review-img{
-    width:80%;
+    width:60%;
     height: auto;
 }
 

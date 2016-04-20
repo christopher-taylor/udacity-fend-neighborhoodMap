@@ -50,6 +50,10 @@ http://foundation.zurb.com/forum/posts/22792-is-there-a-simple-method-of-centeri
 https://stackoverflow.com/questions/7176908/how-to-get-index-of-object-by-its-property-in-javascript/34004613#34004613
 
 
+                              Prestaul - imgError
+                            -----------------------
+    http://stackoverflow.com/questions/92720/jquery-javascript-to-replace-broken-images
+
 ================================================================================
                                 SPECIAL THANKS
 ================================================================================

@@ -212,7 +212,7 @@ var View = {
         $('#info-pane').animate({
             left: -2500
         }, 1000);
-        
+
         // Use set timeout to keep the content from being cleared before the pane is hidden
         setTimeout(this.clearInfoPane, 1000);
         this.locInfoPaneVisible = false;
@@ -231,10 +231,9 @@ var View = {
 
     flickrSearch: function(query) {
         var queryURL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&" +
-            "api_key=7a5cd1ee02253a6551f6b0e98bb241f5&text=" + query + "&format=json&per_page=10&" +
+            "api_key=7a5cd1ee02253a6551f6b0e98bb241f5&text=" + query + "&format=json&per_page=5&" +
             "sort=relevance&privacy_filter=1&nojsoncallback=1";
         $photoElem = $("#flickr-photos");
-        // $photoElemContent = '';
 
         $.getJSON(queryURL, function(data) {
             var $photos = data['photos']['photo'];
@@ -244,7 +243,6 @@ var View = {
                 title = photo['title'];
                 src = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + ".jpg";
                 imgElem = '<div class="img-viewport" style="background-image: url(' + mobileSrc + ');" data-toggle="modal" data-target="#modal' + i + '">&nbsp;</div>';
-                // '<img src="' + mobileSrc + '" />';
                 modalElem = '<div class="modal fade" id="modal' + i + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body"><img src="' + src + '" style="width:100%;"></div></div></div></div>';
                 $photoElem.append(imgElem);
                 $('#modals').append(modalElem);
@@ -265,6 +263,7 @@ var View = {
                 place.reviews.forEach(function(review, i){
                     $reviewHolder.append(View.buildGoogleReview(review, i));
                 });
+                $reviewHolder.css('overflowY', 'auto');
             } else {
                 console.log("Google Reviews Says: Shits fucked!");
             }
@@ -274,7 +273,7 @@ var View = {
     buildGoogleReview: function(review, index){
         var reviewContainer="";
         if(index > 0){
-            reviewContainer += '<hr style="width:95%;margin:2px;">'
+            reviewContainer += '<hr style="width:95%;margin:5px;">'
         }
         var date = new Date(review.time);
         var dateline = "Posted on: " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
@@ -289,7 +288,7 @@ var View = {
         reviewContainer += '<div class="row" id="review' + index + '">';
 
         // Add the author info to the review container
-        reviewContainer += '<div class="col-xs-2"><h4><a href="' + authorProfileURL + '">' + author + '</a></h4><img src="' + authorProfilePhoto + '" class="review-img"></div>';
+        reviewContainer += '<div class="col-xs-2"><h4><a href="' + authorProfileURL + '">' + author + '</a></h4><img src="' + authorProfilePhoto + '" class="review-img" onerror="imgError(this)"></div>';
 
         reviewContainer += '<div class="col-xs-10 text-left">';
 
@@ -434,4 +433,10 @@ function findWithAttr(array, attr, value) {
             return i;
         }
     }
+}
+
+function imgError(image) {
+    image.onerror = "";
+    image.src = "/img/no-avatar.png";
+    return true;
 }
