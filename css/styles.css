@@ -1,3 +1,8 @@
+.review-img{
+    width:80%;
+    height: auto;
+}
+
 .img-viewport {
     margin: 5px;
     width: calc(20% - 30px);

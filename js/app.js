@@ -3,72 +3,73 @@
 // /IMPORTANT
 
 //TODO: Create the info-pane-elem and all its apis
-//TODO: When a marker or locelem are clicked the info pane should open fullscreen
 /* Note we are hardcoding the required lat/long instead of using
- * google.map.geocoder to reduce the number of ajax calls we make.
- * Please don't ding me, it was a huge pain to get. #TheAPIQuotaIsReal
- */
+* google.map.geocoder to reduce the number of ajax calls we make.
+* Please don't ding me, it was a huge pain to get. #TheAPIQuotaIsReal
+*/
+var map,
+    places;
 var locationData = [{
     name: "Dick's Drive-In",
+    address: "500 Queen Anne Ave N, Seattle, WA 9810",
     filterTags: ["", "food", "burgers", "american"],
     flickrQuery: "dick's drive in Seattle",
-    yelpURL: "http://www.yelp.com/biz/dicks-drive-in-seattle-4",
-    address: "500 Queen Anne Ave N, Seattle, WA 9810",
+    placeID: "ChIJJxszkEMVkFQRir4VQRt8zwc",
     lat: 47.623466,
     long: -122.356383
 }, {
     name: "Thai Heaven",
     filterTags: ["", "food", "thai"],
-    flickrQuery: "thai heaven Seattle",
-    yelpURL: "http: //www.yelp.com/biz/thai-heaven-seattle",
     address: "352 Roy St, Seattle, WA 98109",
+    flickrQuery: "thai heaven Seattle",
+    placeID: "ChIJa9rR2kAVkFQR53dWKG_k6GU",
     lat: 47.625587,
     long: -122.349916
 }, {
     name: "Roti Cuisine of India",
     filterTags: ["", "food", "indian"],
     flickrQuery: "Roti Seattle",
-    yelpURL: "http: //www.yelp.com/biz/roti-indian-cuisine-seattle",
     address: "530 Queen Anne Ave N, Seattle, WA 98109",
+    placeID: "ChIJZZwKv0MVkFQR3FUAAkRq4X8",
     lat: 47.624234,
     long: -122.356371
 }, {
     name: "Bahn Thai",
     filterTags: ["", "food", "thai"],
     flickrQuery: "bahn thai restaurant Seattle",
-    yelpURL: "http: //www.yelp.com/biz/bahn-thai-restaurant-seattle",
     address: "409 Roy St, Seattle, WA 98109",
+    placeID: "ChIJg3wZNUcVkFQRr07_kXaFv24",
     lat: 47.625237,
     long: -122.348381
 }, {
     name: "Bamboo Garden",
     filterTags: ["", "food", "chinese", "vegetarian"],
     flickrQuery: "bamboo garden restaurant seattle",
-    yelpURL: "http: //www.yelp.com/biz/bamboo-garden-vegetarian-cuisine-seattle",
     address: "364 Roy St, Seattle, WA 98109",
+    placeID: "ChIJ6-KGz0AVkFQRgR0pgSdWApU",
     lat: 47.625607,
     long: -122.349461
 }, {
     name: "Seattle Center",
     filterTags: ["", "entertainment", "outdoor", "kid friendly"],
     flickrQuery: "seattle center",
-    yelpURL: "http: //www.yelp.com/biz/seattle-center-seattle",
     address: "305 Harrison St, Seattle, WA 98109",
+    placeID: "ChIJsQLp1UUVkFQRUpflIwS6nYA",
     lat: 47.621914,
     long: -122.351643
 }, {
     name: "SIFF Cinema Uptown",
     filterTags: ["", "entertainment"],
     flickrQuery: "siff cinema uptown",
-    yelpURL: "http: //www.yelp.com/biz/siff-cinema-uptown-seattle",
     address: "511 Queen Anne Ave N, Seattle, WA 98109",
+    placeID: "ChIJ_9Uf00YVkFQRJodvoY303WY",
     lat: 47.623617,
     long: -122.356978
 }, {
     name: "Experience Music Project Museum",
     filterTags: ["", "entertainment", "music"],
     flickrQuery: "experience music project",
-    yelpURL: "http: //www.yelp.com/biz/emp-museum-seattle",
+    placeID: "ChIJY8p6-EYVkFQREthJEc0p6dE",
     address: "325 5 th Ave N, Seattle, WA 98109",
     lat: 47.621707,
     long: -122.348518
@@ -76,7 +77,7 @@ var locationData = [{
     name: "McCaw Hall",
     filterTags: ["", "entertainment", "performing arts", "art", "arts", "ballet"],
     flickrQuery: "mccaw hall seattle",
-    yelpURL: "http: //www.yelp.com/biz/marion-oliver-mccaw-hall-seattle",
+    placeID: "ChIJ_9Uf00YVkFQRRO2Ymj5Oz7k",
     address: "321 Mercer St, Seattle, WA 98109",
     lat: 47.623948,
     long: -122.350088
@@ -84,8 +85,8 @@ var locationData = [{
     name: "Seattle Children's Theater",
     filterTags: ["", "entertainment", "performing arts", "art", "arts", "theater"],
     flickrQuery: "seattle children 's theater",
-    yelpURL: "http: //www.yelp.com/biz/seattle-childrens-theatre-seattle",
     address: "201 Thomas St, Seattle, WA 98109",
+    placeID: "ChIJUdjRsEUVkFQRLeTIPrFLou8",
     lat: 47.620501,
     long: -122.352174
 }];
@@ -96,6 +97,7 @@ var Location = function(data) {
     this.filterTags = ko.observableArray(data.filterTags);
     this.lat = ko.observable(data.lat);
     this.long = ko.observable(data.long);
+    this.address = ko.observable(data.address);
     this.latLong = ko.computed(function() {
         return {
             lat: this.lat(),
@@ -104,8 +106,7 @@ var Location = function(data) {
     }, this);
     this.marker = ko.observable(undefined);
     this.flickrQuery = ko.observable(data.flickrQuery);
-    this.yelpURL = ko.observable(data.yelpURL);
-    this.address = ko.observable(data.address);
+    this.placeID = ko.observable(data.placeID);
     this.nickname = ko.observable(data.nickname);
 
     this.toggleFavorite = function() {
@@ -113,6 +114,7 @@ var Location = function(data) {
         this.marker().label = "!";
     }
 }
+
 
 
 var ViewModel = function() {
@@ -151,6 +153,7 @@ viewModel.init();
 ko.applyBindings(viewModel);
 
 var View = {
+    self: this,
     locElemPaneVisible: false,
     locInfoPaneVisible: false,
 
@@ -192,8 +195,8 @@ var View = {
     toggleLocInfoPane: function(id) {
         if (isFinite(id)) {
             var loc = viewModel.locations()[id];
-            this.clearInfoPane();
             this.flickrSearch(loc.flickrQuery());
+            this.fetchGoogleReviews(loc.placeID());
         };
         if (!this.locInfoPaneVisible) {
             $("#info-pane").animate({
@@ -209,6 +212,9 @@ var View = {
         $('#info-pane').animate({
             left: -2500
         }, 1000);
+        
+        // Use set timeout to keep the content from being cleared before the pane is hidden
+        setTimeout(this.clearInfoPane, 1000);
         this.locInfoPaneVisible = false;
     },
 
@@ -219,6 +225,7 @@ var View = {
     },
     clearInfoPane: function() {
         $("#flickr-photos").empty();
+        $('#google-review-holder').empty();
         $('#modals').empty();
     },
 
@@ -245,6 +252,53 @@ var View = {
         }).error(function() {
             $photoElem.append("Sorry, there was an issue loading photos from flickr!");
         });
+    },
+
+    fetchGoogleReviews: function(placeID){
+        if(places === undefined){
+            places = new google.maps.places.PlacesService(map);
+        }
+        places.getDetails({placeId: placeID}, function(place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK)
+            {
+                var $reviewHolder = $("#google-review-holder");
+                place.reviews.forEach(function(review, i){
+                    $reviewHolder.append(View.buildGoogleReview(review, i));
+                });
+            } else {
+                console.log("Google Reviews Says: Shits fucked!");
+            }
+        });
+    },
+
+    buildGoogleReview: function(review, index){
+        var reviewContainer="";
+        if(index > 0){
+            reviewContainer += '<hr style="width:95%;margin:2px;">'
+        }
+        var date = new Date(review.time);
+        var dateline = "Posted on: " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+        console.log("The review date was " + date);
+        var author = review.author_name;
+        var authorProfilePhoto = "http:" + review.profile_photo_url;
+        var authorProfileURL = review.author_url;
+        var reviewScore = review.rating;
+        var reviewContent = review.text;
+
+        // Add the row to hold our review to review container
+        reviewContainer += '<div class="row" id="review' + index + '">';
+
+        // Add the author info to the review container
+        reviewContainer += '<div class="col-xs-2"><h4><a href="' + authorProfileURL + '">' + author + '</a></h4><img src="' + authorProfilePhoto + '" class="review-img"></div>';
+
+        reviewContainer += '<div class="col-xs-10 text-left">';
+
+        // Add the review and close the container;
+        for(i = 1; i<=review.rating; i++){
+            reviewContainer += '<span class="glyphicon glyphicon-star favorite"></span>';
+        }
+        reviewContainer += '<br /><br /><blockquote>' + reviewContent + '</blockquote><p class="text-right">' + dateline + '</p></div></div>';
+        return reviewContainer;
     }
 };
 
@@ -258,7 +312,7 @@ function initMap() {
     // console.log($(window).width());
     // if ($(window.width()) )
     // Create a map object and specify the DOM element for display.
-    var map = new google.maps.Map($("#main").get(0), {
+    map = new google.maps.Map($("#main").get(0), {
         draggable: false,
         disableDefaultUI: true,
         center: myLatLng,
@@ -343,6 +397,7 @@ function initMap() {
     google.maps.event.addDomListener($("#filter-btn").get(0), 'click', function() {
         runfilter();
     });
+
     google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function() {
         google.maps.event.trigger(marker, 'clear-filter');
     });
