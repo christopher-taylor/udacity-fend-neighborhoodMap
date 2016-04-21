@@ -1,14 +1,14 @@
+"use strict";
 // IMPORTANT
 // For attribution please see ../THE_CREDITS.js
 // /IMPORTANT
 
 //TODO: Create the info-pane-elem and all its apis
 /* Note we are hardcoding the required lat/long instead of using
-* google.map.geocoder to reduce the number of ajax calls we make.
-* Please don't ding me, it was a huge pain to get. #TheAPIQuotaIsReal
-*/
-var map,
-    places;
+ * google.map.geocoder to reduce the number of ajax calls we make.
+ * Please don't ding me, it was a huge pain to get. #TheAPIQuotaIsReal
+ */
+var map, places;
 var locationData = [{
     name: "Dick's Drive-In",
     address: "500 Queen Anne Ave N, Seattle, WA 9810",
@@ -112,26 +112,27 @@ var Location = function(data) {
     this.toggleFavorite = function() {
         this.favorite(!this.favorite());
         this.marker().label = "!";
-    }
-}
+    };
+};
 
 
 
 var ViewModel = function() {
     var self = this;
+    self.reviews = ko.observableArray([]);
     self.locations = ko.observableArray([]);
     self.activeFilter = ko.observable("");
     this.init = function() {
         locationData.forEach(function(location) {
             self.locations.push(new Location(location));
         });
-    }
+    };
 
     this.getFilterTags = function() {
         var filterTagList = [""];
         self.locations().forEach(function(location) {
             location.filterTags().forEach(function(tag) {
-                if ($.inArray(tag, filterTagList) == -1) {
+                if ($.inArray(tag, filterTagList) === -1) {
                     filterTagList.push(tag);
                 }
             });
@@ -197,7 +198,7 @@ var View = {
             var loc = viewModel.locations()[id];
             this.flickrSearch(loc.flickrQuery());
             this.fetchGoogleReviews(loc.placeID());
-        };
+        }
         if (!this.locInfoPaneVisible) {
             $("#info-pane").animate({
                 left: 0
@@ -233,14 +234,15 @@ var View = {
         var queryURL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&" +
             "api_key=7a5cd1ee02253a6551f6b0e98bb241f5&text=" + query + "&format=json&per_page=5&" +
             "sort=relevance&privacy_filter=1&nojsoncallback=1";
-        $photoElem = $("#flickr-photos");
+        var $photoElem = $("#flickr-photos");
 
         $.getJSON(queryURL, function(data) {
-            var $photos = data['photos']['photo'];
-            var src, mobileSrc, title, imgElem;
+            var $photos = data.photos.photo;
+            var src, mobileSrc, title, imgElem, modalElem;
+
             $photos.forEach(function(photo, i) {
                 mobileSrc = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_m.jpg";
-                title = photo['title'];
+                title = photo.title;
                 src = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + ".jpg";
                 imgElem = '<div class="img-viewport" style="background-image: url(' + mobileSrc + ');" data-toggle="modal" data-target="#modal' + i + '">&nbsp;</div>';
                 modalElem = '<div class="modal fade" id="modal' + i + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body"><img src="' + src + '" style="width:100%;"></div></div></div></div>';
@@ -252,53 +254,24 @@ var View = {
         });
     },
 
-    fetchGoogleReviews: function(placeID){
-        if(places === undefined){
+    fetchGoogleReviews: function(placeID) {
+        if (places === undefined) {
             places = new google.maps.places.PlacesService(map);
         }
-        places.getDetails({placeId: placeID}, function(place, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK)
-            {
+        places.getDetails({
+            placeId: placeID
+        }, function(place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
                 var $reviewHolder = $("#google-review-holder");
-                place.reviews.forEach(function(review, i){
-                    $reviewHolder.append(View.buildGoogleReview(review, i));
+                place.reviews.forEach(function(review) {
+                    viewModel.reviews.push(new Review(review));
                 });
                 $reviewHolder.css('overflowY', 'auto');
             } else {
-                console.log("Google Reviews Says: Shits fucked!");
+                alert("We could not get google reviews for this location!");
             }
         });
     },
-
-    buildGoogleReview: function(review, index){
-        var reviewContainer="";
-        if(index > 0){
-            reviewContainer += '<hr style="width:95%;margin:5px;">'
-        }
-        var date = new Date(review.time);
-        var dateline = "Posted on: " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
-        console.log("The review date was " + date);
-        var author = review.author_name;
-        var authorProfilePhoto = "http:" + review.profile_photo_url;
-        var authorProfileURL = review.author_url;
-        var reviewScore = review.rating;
-        var reviewContent = review.text;
-
-        // Add the row to hold our review to review container
-        reviewContainer += '<div class="row" id="review' + index + '">';
-
-        // Add the author info to the review container
-        reviewContainer += '<div class="col-xs-2"><h4><a href="' + authorProfileURL + '">' + author + '</a></h4><img src="' + authorProfilePhoto + '" class="review-img" onerror="imgError(this)"></div>';
-
-        reviewContainer += '<div class="col-xs-10 text-left">';
-
-        // Add the review and close the container;
-        for(i = 1; i<=review.rating; i++){
-            reviewContainer += '<span class="glyphicon glyphicon-star favorite"></span>';
-        }
-        reviewContainer += '<br /><br /><blockquote>' + reviewContent + '</blockquote><p class="text-right">' + dateline + '</p></div></div>';
-        return reviewContainer;
-    }
 };
 
 function initMap() {
@@ -307,9 +280,6 @@ function initMap() {
         lng: -122.3519913
     };
 
-    //TODO: Set up some default zooms based on screen width and set draggable: true and zoomControl:true;
-    // console.log($(window).width());
-    // if ($(window.width()) )
     // Create a map object and specify the DOM element for display.
     map = new google.maps.Map($("#main").get(0), {
         draggable: false,
@@ -339,7 +309,7 @@ function initMap() {
             tags: location.filterTags(),
             position: location.latLong(),
             title: location.name(),
-            animation: google.maps.Animation.DROP,
+            animation: google.maps.Animation.DROP
         });
 
         marker.addListener('filter', function() {
@@ -384,7 +354,7 @@ function initMap() {
             $("#clear-filter-btn").show();
 
         }
-    }
+    };
 
     google.maps.event.addDomListener($("#filter-box").get(0), 'keypress', function(e) {
         if (e.which === 13) {
@@ -400,7 +370,7 @@ function initMap() {
     google.maps.event.addDomListener($("#clear-filter-btn").get(0), 'click', function() {
         google.maps.event.trigger(marker, 'clear-filter');
     });
-};
+}
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
@@ -433,10 +403,4 @@ function findWithAttr(array, attr, value) {
             return i;
         }
     }
-}
-
-function imgError(image) {
-    image.onerror = "";
-    image.src = "/img/no-avatar.png";
-    return true;
 }
