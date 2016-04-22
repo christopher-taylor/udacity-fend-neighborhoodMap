@@ -119,6 +119,7 @@ var Location = function(data) {
 
 var ViewModel = function() {
     var self = this;
+    self.flickrPhotos = ko.observableArray([]);
     self.reviews = ko.observableArray([]);
     self.locations = ko.observableArray([]);
     self.activeFilter = ko.observable("");
@@ -225,6 +226,8 @@ var View = {
         viewModel.sortLocations();
     },
     clearInfoPane: function() {
+        viewModel.flickrPhotos([]);
+        viewModel.reviews([]);
         $("#flickr-photos").empty();
         $('#google-review-holder').empty();
         $('#modals').empty();
@@ -240,14 +243,8 @@ var View = {
             var $photos = data.photos.photo;
             var src, mobileSrc, title, imgElem, modalElem;
 
-            $photos.forEach(function(photo, i) {
-                mobileSrc = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_m.jpg";
-                title = photo.title;
-                src = "http://farm" + photo.farm + ".static.flickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + ".jpg";
-                imgElem = '<div class="img-viewport" style="background-image: url(' + mobileSrc + ');" data-toggle="modal" data-target="#modal' + i + '">&nbsp;</div>';
-                modalElem = '<div class="modal fade" id="modal' + i + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">' + title + '</h4></div><div class="modal-body"><img src="' + src + '" style="width:100%;"></div></div></div></div>';
-                $photoElem.append(imgElem);
-                $('#modals').append(modalElem);
+            $photos.forEach(function(photo) {
+                viewModel.flickrPhotos.push(new FlickrPhoto(photo));
             });
         }).error(function() {
             $photoElem.append("Sorry, there was an issue loading photos from flickr!");
@@ -266,12 +263,11 @@ var View = {
                 place.reviews.forEach(function(review) {
                     viewModel.reviews.push(new Review(review));
                 });
-                $reviewHolder.css('overflowY', 'auto');
             } else {
                 alert("We could not get google reviews for this location!");
             }
         });
-    },
+    }
 };
 
 function initMap() {
@@ -374,7 +370,7 @@ function initMap() {
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
-        var matches, substringRegex;
+        var matches, substrRegex;
 
         // an array that will be populated with substring matches
         matches = [];
