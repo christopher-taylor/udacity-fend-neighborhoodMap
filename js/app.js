@@ -241,12 +241,11 @@ var View = {
 
         $.getJSON(queryURL, function(data) {
             var $photos = data.photos.photo;
-            var src, mobileSrc, title, imgElem, modalElem;
 
             $photos.forEach(function(photo) {
                 viewModel.flickrPhotos.push(new FlickrPhoto(photo));
             });
-        }).error(function() {
+        }).fail(function() {
             $photoElem.append("Sorry, there was an issue loading photos from flickr!");
         });
     },
@@ -259,7 +258,6 @@ var View = {
             placeId: placeID
         }, function(place, status) {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
-                var $reviewHolder = $("#google-review-holder");
                 place.reviews.forEach(function(review) {
                     viewModel.reviews.push(new Review(review));
                 });
@@ -313,7 +311,7 @@ function initMap() {
 
             markers.forEach(function(marker) {
                 // Toggle visibility as needed.
-                if ($.inArray(filter, marker.tags) != -1) {
+                if ($.inArray(filter, marker.tags) !== -1) {
                     marker.setVisible(true);
                 } else {
                     marker.setVisible(false);

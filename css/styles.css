@@ -1,24 +1,23 @@
 td {
     height: 34px;
 }
-.filter-bar-button{
-    border-radius:0px;
-    height:34px;
-    width:35px;
+.filter-bar-button {
+    border-radius: 0px;
+    height: 34px;
+    width: 35px;
 }
-#google-review-holder{
+#google-review-holder {
     height: calc(100vh - 119px);
 }
-#close-info-chevron{
+#close-info-chevron {
     position: fixed;
     top: calc(50vh - 50px);
     font-size: 50px;
 }
-.review-img{
-    width:60%;
+.review-img {
+    width: 60%;
     height: auto;
 }
-
 .img-viewport {
     margin: 5px;
     width: calc(20% - 30px);
