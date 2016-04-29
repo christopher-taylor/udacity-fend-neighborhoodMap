@@ -92,22 +92,21 @@ var locationData = [{
 }];
 
 var Location = function(data) {
-    this.name = ko.observable(data.name);
-    this.favorite = ko.observable(false);
-    this.filterTags = ko.observableArray(data.filterTags);
-    this.lat = ko.observable(data.lat);
-    this.long = ko.observable(data.long);
-    this.address = ko.observable(data.address);
-    this.latLong = ko.computed(function() {
-        return {
-            lat: this.lat(),
-            lng: this.long()
-        };
-    }, this);
-    this.marker = ko.observable(undefined);
-    this.flickrQuery = ko.observable(data.flickrQuery);
-    this.placeID = ko.observable(data.placeID);
-    this.nickname = ko.observable(data.nickname);
+    this.name = data.name;
+    this.favorite = false;
+    this.filterTags = data.filterTags;
+    this.filterTags.push(this.name.toLowerCase());
+    this.lat = data.lat;
+    this.long = data.long;
+    this.address = data.address;
+    this.latLong = {
+        lat: this.lat,
+        lng: this.long
+    };
+    this.marker = undefined;
+    this.flickrQuery = data.flickrQuery;
+    this.placeID = data.placeID;
+    this.nickname = data.nickname;
 
     this.toggleFavorite = function() {
         this.favorite(!this.favorite());
@@ -132,7 +131,7 @@ var ViewModel = function() {
     this.getFilterTags = function() {
         var filterTagList = [""];
         self.locations().forEach(function(location) {
-            location.filterTags().forEach(function(tag) {
+            location.filterTags.forEach(function(tag) {
                 if ($.inArray(tag, filterTagList) === -1) {
                     filterTagList.push(tag);
                 }
@@ -197,8 +196,8 @@ var View = {
     toggleLocInfoPane: function(id) {
         if (isFinite(id)) {
             var loc = viewModel.locations()[id];
-            this.flickrSearch(loc.flickrQuery());
-            this.fetchGoogleReviews(loc.placeID());
+            this.flickrSearch(loc.flickrQuery);
+            this.fetchGoogleReviews(loc.placeID);
         }
         if (!this.locInfoPaneVisible) {
             $("#info-pane").animate({
@@ -300,9 +299,9 @@ function initMap() {
     viewModel.locations().forEach(function(location) {
         marker = new google.maps.Marker({
             map: map,
-            tags: location.filterTags(),
-            position: location.latLong(),
-            title: location.name(),
+            tags: location.filterTags,
+            position: location.latLong,
+            title: location.name,
             animation: google.maps.Animation.DROP
         });
 
@@ -329,11 +328,16 @@ function initMap() {
         });
 
         marker.addListener('click', function() {
-            var locID = findWithAttr(viewModel.locations(), 'name', this.title);
+            var self=this;
+            var locID = findWithAttr(viewModel.locations(), 'name', self.title);
+            self.setAnimation(google.maps.Animation.BOUNCE);
             View.toggleLocInfoPane(locID);
+            setTimeout(function(){
+                self.setAnimation(null);
+            }  , 1000 );
         });
 
-        location.marker(marker);
+        location.marker = marker;
         markers.push(marker);
     });
 
@@ -393,7 +397,7 @@ View.init();
 
 function findWithAttr(array, attr, value) {
     for (var i = 0; i < array.length; i += 1) {
-        if (array[i][attr]() === value) {
+        if (array[i][attr] === value) {
             return i;
         }
     }

@@ -1,23 +1,24 @@
-td {
-    height: 34px;
-}
 .filter-bar-button {
     border-radius: 0px;
     height: 34px;
     width: 35px;
 }
+
 #google-review-holder {
     height: calc(100vh - 119px);
 }
+
 #close-info-chevron {
     position: fixed;
     top: calc(50vh - 50px);
     font-size: 50px;
 }
+
 .review-img {
     width: 60%;
     height: auto;
 }
+
 .img-viewport {
     margin: 5px;
     width: calc(20% - 30px);
@@ -27,12 +28,15 @@ td {
     background-repeat: no-repeat;
     background-position: center;
 }
+
 .favorite {
     color: #FFDF00;
 }
+
 #filter-bar {
     z-index: 2;
 }
+
 #info-pane {
     margin: 0px;
     background-color: white;
@@ -42,9 +46,11 @@ td {
     top: 0px;
     left: -2500px;
 }
+
 #info-pane-holder {
     text-align: center;
 }
+
 #loc-elem-pane {
     will-change: top;
     height: calc(100% - 33px);
@@ -54,37 +60,45 @@ td {
     padding: 0px;
     background-color: white;
 }
+
 #loc-elem-holder {
     height: calc(100% - 51px);
     overflow-y: auto;
 }
+
 .loc-elem {
     padding: 7.5px 10px;
 }
+
 #main {
     z-index: 0;
     height: calc(100vh - 40px);
 }
+
 .truncate {
     margin-right: 0px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .center-vertically {
     position: relative;
     top: 50%;
     transform: translateY(+50%);
 }
+
 .loc-elem-icon {
     padding-left: 0px;
     padding-right: 0px;
     font-size: 20px;
     text-align: center;
 }
+
 .twitter-typeahead .tt-query, .twitter-typeahead .tt-hint {
     margin-bottom: 0;
 }
+
 .twitter-typeahead .tt-hint {
     display: block;
     background-color: white;
@@ -95,6 +109,7 @@ td {
     border: 1px solid transparent;
     border-radius: 4px;
 }
+
 .twitter-typeahead .hint-small {
     height: 30px;
     padding: 5px 10px;
@@ -102,6 +117,7 @@ td {
     border-radius: 3px;
     line-height: 1.5;
 }
+
 .twitter-typeahead .hint-large {
     height: 45px;
     padding: 10px 16px;
@@ -109,6 +125,7 @@ td {
     border-radius: 6px;
     line-height: 1.33;
 }
+
 .tt-menu {
     min-width: 160px;
     margin-top: 2px;
@@ -122,21 +139,26 @@ td {
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
     background-clip: padding-box;
 }
+
 .tt-suggestion {
     display: block;
     padding: 3px 20px;
 }
+
 .tt-suggestion.tt-cursor {
     color: #fff;
     background-color: #0081c2;
     background-repeat: repeat-x;
 }
+
 .tt-suggestion.tt-is-under-cursor a {
     color: #fff;
 }
+
 .tt-suggestion p {
     margin: 0;
 }
+
 .twitter-typeahead, .tt-hint, .tt-input, .tt-menu {
     width: 100%;
 }

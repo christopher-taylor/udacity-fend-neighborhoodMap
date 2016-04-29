@@ -1,15 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, width=device-width, height=device-height" />
     <title>My Favorite Local Jams!</title>
-    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="./css/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="./css/styles.css">
-    <script type='text/javascript' src='./js/libs/jquery-2.2.3.min.js'></script>
-    <script type="text/javascript" src="./js/libs/typeahead.bundle.min.js"></script>
-    <script type='text/javascript' src='./js/libs/bootstrap.min.js'></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
@@ -34,11 +32,10 @@
             <div id="info-pane-holder" class="col-xs-11" style="overflow-y: auto">
                 <h4 style="text-align: left">Photos From Flickr</h4>
                 <div id="flickr-photos" class="row" data-bind="foreach: flickrPhotos">
-                    <div class="img-viewport" data-bind="style: {backgroundImage: 'url(' + $data.mobileSrc() + ')'}, attr:{'data-target': 'modal' + $index()}" data-toggle="modal">&nbsp;</div>
+                    <div class="img-viewport" data-bind="style: {backgroundImage: 'url(' + $data.mobileSrc + ')'}, attr:{'data-target': 'modal' + $index()}" data-toggle="modal">&nbsp;</div>
                 </div>
                 <hr style="width:95%">
                 <h4 style="text-align:left">Google Reviews</h4>
-                <!-- <pre data-bind="text: ko.toJSON($data, null, 2)"></pre> -->
                 <div id="google-review-holder" data-bind="foreach: reviews">
                     <div class="row">
                         <!-- ko if: $index() > 0 -->
@@ -46,10 +43,10 @@
                         <!-- /ko -->
                         <div class="col-xs-2">
                             <h4><a href="" data-bind="attr: {href:$data.authorProfileURL}"></a></h4>
-                            <img class="review-img" alt="Author Profile Photo" data-bind="attr: {src: $data.authorProfilePhoto()}">
+                            <img class="review-img" alt="Author Profile Photo" data-bind="attr: {src: $data.authorProfilePhoto}">
                         </div>
                         <div class="col-xs-10 text-left">
-                            <span data-bind="foreach: new Array($data.rating())">
+                            <span data-bind="foreach: new Array($data.rating">
                                 <span class="glyphicon glyphicon-star favorite"></span>
                             </span><br /><br />
                             <blockquote data-bind="text: $data.reviewContent"></blockquote>
@@ -65,7 +62,7 @@
         <div class="row" id="main"></div>
         <div id="loc-elem-pane" class="container" style="width: 100%;left:0px;">
             <div data-bind="foreach: locations" id="loc-elem-holder">
-                <!-- ko if: $data.filterTags().indexOf($parent.activeFilter()) > -1 -->
+                <!-- ko if: $data.filterTags.indexOf($parent.activeFilter()) > -1 -->
                 <div data-bind="attr: { id: $index() }" class="row loc-elem" style="margin:0px;">
                     <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-map-marker"></span>
                     <div class="col-xs-10 truncate" onclick="View.toggleLocInfoPane($(this).parent()[0].id)">
@@ -90,17 +87,20 @@
                         <h4 class="modal-title" data-bind="text: $data.title"></h4>
                     </div>
                     <div class="modal-body">
-                        <img data-bind="attr: {src: $data.src()}" alt="Flickr Photo" style="width:100%;">
+                        <img data-bind="attr: {src: $data.src}" alt="Flickr Photo" style="width:100%;">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type='text/javascript' src='./bower_components/knockout/dist/knockout.js'></script>
-    <script type="text/javascript" src="./js/review.js"></script>
-    <script type="text/javascript" src="./js/flickrPhoto.js"></script>
-    <script type="text/javascript" src="./js/app.js"></script>
-    <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCiZxsEa_fpBqaCGHezuVxaF262agey-wg&libraries=visualization,places&callback=initMap" onerror="alert('We couldn\'t load google maps data!')"></script>
+    <script src='./js/libs/jquery-2.2.3.min.js'></script>
+    <script src="./js/libs/typeahead.bundle.min.js"></script>
+    <script src='./js/libs/bootstrap.min.js'></script>
+    <script src='./bower_components/knockout/dist/knockout.js'></script>
+    <script src="./js/review.js"></script>
+    <script src="./js/flickrPhoto.js"></script>
+    <script src="./js/app.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCiZxsEa_fpBqaCGHezuVxaF262agey-wg&libraries=visualization,places&callback=initMap" onerror="alert('We couldn\'t load google maps data!')"></script>
 </body>
 
 </html>
