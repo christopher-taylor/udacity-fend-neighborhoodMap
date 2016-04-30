@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,19 +12,19 @@
 <body>
     <div class="container-fluid" style="position:relative">
         <div class="row input-group" id="filter-bar">
-            <span id="clear-filter-btn" class="input-group-btn btn-block" style="display:none;">
+            <span id="clear-filter-btn" class="input-group-btn btn-block" data-bind="visible: activeFilter, event: {click: resetFilter}" style="display:none;">
                 <button class="btn btn-primary" style="border-radius:0px !important;">
                     <span class="glyphicon glyphicon-remove"></span>&nbsp;
             </button>
             </span>
-            <input type="text" class="form-control" id="filter-box" placeholder="Food, entertainment, thai, etc" />
+            <input type="text" class="form-control" id="filter-box" data-bind="textInput: activeFilter" placeholder="Food, entertainment, thai, etc" />
             <span class="input-group-btn btn-block">
-                <button id="filter-btn" class="btn btn-primary text-center" style="height:34px;padding: 0px 12px;">
+                <button id="filter-btn" class="btn btn-primary text-center" style="height:34px;padding: 0px 12px;" type="submit" data-bind="event: {click: filter}">
                     <span class="glyphicon glyphicon glyphicon-filter"></span>Filter
-                </button>
-                <button id="hambuger-btn" class="btn btn-primary" style="border-radius:0px;height:34px;padding: 0px 12px;" onclick="View.toggleLocElemPane();">
-                    <span class="glyphicon glyphicon-menu-hamburger text-center"></span>&nbsp;
-                </button>
+            </button>
+            <button id="hambuger-btn" class="btn btn-primary" style="border-radius:0px;height:34px;padding: 0px 12px;" onclick="View.toggleLocElemPane();">
+                <span class="glyphicon glyphicon-menu-hamburger text-center"></span>&nbsp;
+            </button>
             </span>
         </div>
         <div id="info-pane" class="row">
@@ -39,16 +38,18 @@
                 <div id="google-review-holder" data-bind="foreach: reviews">
                     <div class="row">
                         <!-- ko if: $index() > 0 -->
-                            <hr style="width:95%;margin:5px;">
+                        <hr style="width:95%;margin:5px;">
                         <!-- /ko -->
                         <div class="col-xs-2">
                             <h4><a href="" data-bind="attr: {href:$data.authorProfileURL}"></a></h4>
                             <img class="review-img" alt="Author Profile Photo" data-bind="attr: {src: $data.authorProfilePhoto}">
                         </div>
                         <div class="col-xs-10 text-left">
-                            <span data-bind="foreach: new Array($data.rating">
+                            <span data-bind="foreach: new Array($data.rating)">
                                 <span class="glyphicon glyphicon-star favorite"></span>
-                            </span><br /><br />
+                            </span>
+                            <br />
+                            <br />
                             <blockquote data-bind="text: $data.reviewContent"></blockquote>
                             <p class="text-right" data-bind="text: $data.dateline"></p>
                         </div>
