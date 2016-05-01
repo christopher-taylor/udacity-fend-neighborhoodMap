@@ -4,6 +4,11 @@
     width: 35px;
 }
 
+.show-hidden{
+    top: 33px !important;
+    left: 0px !important;
+}
+
 #google-review-holder {
     height: calc(100vh - 119px);
 }
@@ -45,6 +50,7 @@
     z-index: 3;
     top: 0px;
     left: -2500px;
+    transition: left 1s linear;
 }
 
 #info-pane-holder {
@@ -56,6 +62,7 @@
     height: calc(100% - 33px);
     position: absolute;
     top: -1500px;
+    transition: top 1s linear;
     z-index: 1;
     padding: 0px;
     background-color: white;

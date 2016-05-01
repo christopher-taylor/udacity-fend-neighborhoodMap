@@ -92,7 +92,7 @@ var locationData = [{
 
 var Location = function(data) {
     this.name = data.name;
-    this.favorite = false;
+    this.favorite = ko.observable(false);
     this.filterTags = data.filterTags;
     this.filterTags.push(this.name.toLowerCase());
     this.lat = data.lat;
@@ -109,7 +109,6 @@ var Location = function(data) {
 
     this.toggleFavorite = function() {
         this.favorite(!this.favorite());
-        this.marker().label = "!";
     };
 };
 
@@ -117,145 +116,47 @@ var Location = function(data) {
 
 var ViewModel = function() {
     var self = this;
+
     self.markers = [];
     self.flickrPhotos = ko.observableArray([]);
     self.reviews = ko.observableArray([]);
     self.locations = ko.observableArray([]);
     self.activeFilter = ko.observable("");
-    this.init = function() {
-        locationData.forEach(function(location) {
-            self.locations.push(new Location(location));
-        });
-    };
+    self.filterTags = [];
+    self.locInfoPaneVisible = ko.observable(false);
+    self.locElemPaneVisible = ko.observable(false);
 
-    this.getFilterTags = function() {
-        var filterTagList = [""];
-        self.locations().forEach(function(location) {
-            location.filterTags.forEach(function(tag) {
-                if ($.inArray(tag, filterTagList) === -1) {
-                    filterTagList.push(tag);
-                }
-            });
-        });
-        return filterTagList;
-    };
-    this.resetFilter = function() {
-        self.activeFilter("");
-        self.markers.forEach(function(marker) {
-            marker.setVisible(true);
-        });
-    };
-
-    this.sortLocations = function() {
-        self.locations(self.locations().slice().sort(self.locationComparator));
-    };
-
-    this.locationComparator = function(x, y) {
-        return (x.favorite() === y.favorite()) ? 0 : x.favorite() ? -1 : 1;
-    };
-
-    this.filter = function() {
-        // If this is a valid filter tag
-        if ($.inArray(self.activeFilter(), self.getFilterTags()) != -1 && self.activeFilter != "") {
-            self.markers.forEach(function(marker) {
-                google.maps.event.trigger(marker, 'filter');
-            });
+    this.toggleLocInfoPane = function(item, event) {
+        var loc;
+        if(isFinite(item)){
+            loc = self.getLocation(item);
         } else {
-            alert("Your filter was invalid!");
+            loc = item;
+        }
+        self.flickrSearch(loc.flickrQuery);
+        self.fetchGoogleReviews(loc.placeID);
+        if (!self.locInfoPaneVisible()) {
+            self.locInfoPaneVisible(true);
+        } else {
+            self.hideLocInfoPane();
         }
     };
 
-    this.checkKeypress = function(e) {
-        if (e.which === 13) {
-            self.filter();
-        }
+    this.hideLocInfoPane = function() {
+        self.locInfoPaneVisible(false);
+        setTimeout(self.clearInfoPane, 1500);
     };
-};
 
-var viewModel = new ViewModel();
-viewModel.init();
-ko.applyBindings(viewModel);
+    this.getLocation = function(id, event) {
+        return self.locations()[id];
+    };
 
-var View = {
-    self: this,
-    locElemPaneVisible: false,
-    locInfoPaneVisible: false,
+    this.clearInfoPane = function() {
+        self.flickrPhotos([]);
+        self.reviews([]);
+    };
 
-    init: function() {
-        this.initTypeahead();
-    },
-
-    initTypeahead: function() {
-        $('#filter-box').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        }, {
-            name: 'filterTagList',
-            source: substringMatcher(viewModel.getFilterTags())
-        });
-        $('.typeahead.input-sm').siblings('input.tt-hint').addClass('hint-small');
-        $('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
-    },
-
-    toggleLocElemPane: function() {
-        if (!this.locElemPaneVisible) {
-            $("#loc-elem-pane").animate({
-                top: 33
-            }, 900);
-            this.locElemPaneVisible = true;
-        } else {
-            this.hideLocElemPane();
-        }
-    },
-
-    hideLocElemPane: function() {
-        $('#loc-elem-pane').animate({
-            top: -1000
-        }, 1000);
-        this.locElemPaneVisible = false;
-    },
-
-    toggleLocInfoPane: function(id) {
-        if (isFinite(id)) {
-            var loc = viewModel.locations()[id];
-            this.flickrSearch(loc.flickrQuery);
-            this.fetchGoogleReviews(loc.placeID);
-        }
-        if (!this.locInfoPaneVisible) {
-            $("#info-pane").animate({
-                left: 0
-            }, 1000);
-            this.locInfoPaneVisible = true;
-        } else {
-            this.hideLocInfoPane();
-        }
-    },
-
-    hideLocInfoPane: function() {
-        $('#info-pane').animate({
-            left: -2500
-        }, 1000);
-
-        // Use set timeout to keep the content from being cleared before the pane is hidden
-        setTimeout(this.clearInfoPane, 1000);
-        this.locInfoPaneVisible = false;
-    },
-
-    favoriteLocation: function(id) {
-        viewModel.locations()[id].toggleFavorite();
-        $("#" + id).find(".glyphicon-star").toggleClass('favorite');
-        viewModel.sortLocations();
-    },
-    clearInfoPane: function() {
-        viewModel.flickrPhotos([]);
-        viewModel.reviews([]);
-        $("#flickr-photos").empty();
-        $('#google-review-holder').empty();
-        $('#modals').empty();
-    },
-
-    flickrSearch: function(query) {
+    this.flickrSearch = function(query) {
         var queryURL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&" +
             "api_key=7a5cd1ee02253a6551f6b0e98bb241f5&text=" + query + "&format=json&per_page=5&" +
             "sort=relevance&privacy_filter=1&nojsoncallback=1";
@@ -265,14 +166,14 @@ var View = {
             var $photos = data.photos.photo;
 
             $photos.forEach(function(photo) {
-                viewModel.flickrPhotos.push(new FlickrPhoto(photo));
+                self.flickrPhotos.push(new FlickrPhoto(photo));
             });
         }).fail(function() {
             $photoElem.append("Sorry, there was an issue loading photos from flickr!");
         });
-    },
+    };
 
-    fetchGoogleReviews: function(placeID) {
+    this.fetchGoogleReviews = function(placeID) {
         if (places === undefined) {
             places = new google.maps.places.PlacesService(map);
         }
@@ -287,8 +188,78 @@ var View = {
                 alert("We could not get google reviews for this location!");
             }
         });
-    }
+    };
+
+    this.init = function() {
+        locationData.forEach(function(location) {
+            self.locations.push(new Location(location));
+        });
+        self.getFilterTags();
+        self.initTypeahead();
+    };
+
+    this.getFilterTags = function() {
+        self.locations().forEach(function(location) {
+            location.filterTags.forEach(function(tag) {
+                if ($.inArray(tag, self.filterTags) === -1) {
+                    self.filterTags.push(tag);
+                }
+            });
+        });
+    };
+
+    this.resetFilter = function() {
+        self.activeFilter("");
+        self.markers.forEach(function(marker) {
+            marker.setVisible(true);
+        });
+    };
+
+    this.favoriteLocation = function(location){
+        location.toggleFavorite();
+        self.sortLocations();
+    };
+
+    this.sortLocations = function() {
+        self.locations(self.locations().slice().sort(self.locationComparator));
+    };
+
+    this.locationComparator = function(x, y) {
+        return (x.favorite() === y.favorite()) ? 0 : x.favorite() ? -1 : 1;
+    };
+
+    this.filter = function() {
+        // If this is a valid filter tag
+        if ($.inArray(self.activeFilter(), self.filterTags) != -1 && self.activeFilter != "") {
+            self.markers.forEach(function(marker) {
+                google.maps.event.trigger(marker, 'filter');
+            });
+        } else {
+            alert("Your filter was invalid!");
+        }
+    };
+
+    this.initTypeahead = function() {
+        $('#filter-box').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        }, {
+            name: 'filterTagList',
+            source: substringMatcher(self.filterTags)
+        });
+        $('.typeahead.input-sm').siblings('input.tt-hint').addClass('hint-small');
+        $('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
+    };
+
+    this.toggleLocElemPane = function() {
+        self.locElemPaneVisible(!self.locElemPaneVisible());
+    };
 };
+
+var viewModel = new ViewModel();
+viewModel.init();
+ko.applyBindings(viewModel);
 
 function initMap() {
     var myLatLng = {
@@ -306,14 +277,13 @@ function initMap() {
         zoom: 15
     });
 
-    var noPoi = [{
-        featureType: "poi",
-        stylers: [{
-            visibility: "off"
-        }]
-    }];
     map.setOptions({
-        styles: noPoi
+        styles: [{
+            featureType: "poi",
+            stylers: [{
+                visibility: "off"
+            }]
+        }]
     });
 
     // Create markers and set their positions.
@@ -339,7 +309,7 @@ function initMap() {
             var self = this;
             var locID = findWithAttr(viewModel.locations(), 'name', self.title);
             self.setAnimation(google.maps.Animation.BOUNCE);
-            View.toggleLocInfoPane(locID);
+            viewModel.toggleLocInfoPane(locID);
             setTimeout(function() {
                 self.setAnimation(null);
             }, 1000);
@@ -348,9 +318,9 @@ function initMap() {
         location.marker = marker;
         viewModel.markers.push(marker);
     });
-};
+}
 
-var substringMatcher = function(strs) {
+function substringMatcher(strs) {
     return function findMatches(q, cb) {
         var matches, substrRegex;
 
@@ -371,9 +341,6 @@ var substringMatcher = function(strs) {
         cb(matches);
     };
 };
-
-// Get the ball rolling!
-View.init();
 
 function findWithAttr(array, attr, value) {
     for (var i = 0; i < array.length; i += 1) {

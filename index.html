@@ -15,19 +15,19 @@
             <span id="clear-filter-btn" class="input-group-btn btn-block" data-bind="visible: activeFilter, event: {click: resetFilter}" style="display:none;">
                 <button class="btn btn-primary" style="border-radius:0px !important;">
                     <span class="glyphicon glyphicon-remove"></span>&nbsp;
-            </button>
+                </button>
             </span>
             <input type="text" class="form-control" id="filter-box" data-bind="textInput: activeFilter" placeholder="Food, entertainment, thai, etc" />
             <span class="input-group-btn btn-block">
                 <button id="filter-btn" class="btn btn-primary text-center" style="height:34px;padding: 0px 12px;" type="submit" data-bind="event: {click: filter}">
                     <span class="glyphicon glyphicon glyphicon-filter"></span>Filter
-            </button>
-            <button id="hambuger-btn" class="btn btn-primary" style="border-radius:0px;height:34px;padding: 0px 12px;" onclick="View.toggleLocElemPane();">
-                <span class="glyphicon glyphicon-menu-hamburger text-center"></span>&nbsp;
-            </button>
+                </button>
+                <button id="hambuger-btn" class="btn btn-primary" style="border-radius:0px;height:34px;padding: 0px 12px;" data-bind="event:{click: toggleLocElemPane}">
+                    <span class="glyphicon glyphicon-menu-hamburger text-center"></span>&nbsp;
+                </button>
             </span>
         </div>
-        <div id="info-pane" class="row">
+        <div id="info-pane" class="row" data-bind="css: {'show-hidden': locInfoPaneVisible}">
             <div id="info-pane-holder" class="col-xs-11" style="overflow-y: auto">
                 <h4 style="text-align: left">Photos From Flickr</h4>
                 <div id="flickr-photos" class="row" data-bind="foreach: flickrPhotos">
@@ -57,26 +57,27 @@
                 </div>
             </div>
             <div id="info-pane-chevron" class="col-xs-1">
-                <span id="close-info-chevron" class="glyphicon glyphicon-chevron-left center-vertically text-center" onclick="View.toggleLocInfoPane()"></span>
+                <span id="close-info-chevron" class="glyphicon glyphicon-chevron-left center-vertically text-center" data-bind="event:{click: hideLocInfoPane}"></span>
             </div>
         </div>
         <div class="row" id="main"></div>
-        <div id="loc-elem-pane" class="container" style="width: 100%;left:0px;">
+        <div id="loc-elem-pane" class="container" data-bind="css: {'show-hidden': locElemPaneVisible}" style="width: 100%;left:0px;">
             <div data-bind="foreach: locations" id="loc-elem-holder">
                 <!-- ko if: $data.filterTags.indexOf($parent.activeFilter()) > -1 -->
-                <div data-bind="attr: { id: $index() }" class="row loc-elem" style="margin:0px;">
+                <div data-bind="attr: { id: $index }" class="row loc-elem" style="margin:0px;">
                     <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-map-marker"></span>
-                    <div class="col-xs-10 truncate" onclick="View.toggleLocInfoPane($(this).parent()[0].id)">
+                    <div class="col-xs-10 truncate" data-bind="event: {click: $parent.toggleLocInfoPane}">
                         <span id="loc-name" data-bind="text: $data.name"></span>
                         <hr style="margin:2px 0px;" />
                         <span id="loc-adress" data-bind="text: $data.address"></span>
                     </div>
-                    <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-star" onclick="View.favoriteLocation($(this).parent()[0].id)"></span>
+                    <span class="center-vertically loc-elem-icon col-xs-1 glyphicon glyphicon-star"
+                        data-bind="event: {click: $parent.favoriteLocation}, css: {favorite:  favorite}"></span>
                 </div>
                 <hr style="margin:0px;width:90%;" />
                 <!-- /ko -->
             </div>
-            <span id="loc-elem-pane-chevron" class="glyphicon glyphicon-chevron-up text-center" style="width:100%; font-size: 18px;" onclick="View.hideLocElemPane();"></span>
+            <span id="loc-elem-pane-chevron" class="glyphicon glyphicon-chevron-up text-center" style="width:100%; font-size: 18px;" data-bind="event: {click: toggleLocElemPane}"></span>
         </div>
     </div>
     <div id='modals' data-bind="foreach: flickrPhotos">
