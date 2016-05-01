@@ -127,12 +127,7 @@ var ViewModel = function() {
     self.locElemPaneVisible = ko.observable(false);
 
     this.toggleLocInfoPane = function(item, event) {
-        var loc;
-        if(isFinite(item)){
-            loc = self.getLocation(item);
-        } else {
-            loc = item;
-        }
+        var loc = item;
         self.flickrSearch(loc.flickrQuery);
         self.fetchGoogleReviews(loc.placeID);
         if (!self.locInfoPaneVisible()) {
@@ -169,7 +164,7 @@ var ViewModel = function() {
                 self.flickrPhotos.push(new FlickrPhoto(photo));
             });
         }).fail(function() {
-            $photoElem.append("Sorry, there was an issue loading photos from flickr!");
+            alert("Sorry, there was an issue loading photos from flickr!");
         });
     };
 
@@ -182,7 +177,7 @@ var ViewModel = function() {
         }, function(place, status) {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
                 place.reviews.forEach(function(review) {
-                    viewModel.reviews.push(new Review(review));
+                    self.reviews.push(new Review(review));
                 });
             } else {
                 alert("We could not get google reviews for this location!");
@@ -294,7 +289,14 @@ function initMap() {
             tags: location.filterTags,
             position: location.latLong,
             title: location.name,
-            animation: google.maps.Animation.DROP
+            animation: google.maps.Animation.DROP,
+            bounce: function(numSeconds){
+                var that = this;
+                this.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function() {
+                    that.setAnimation(null);
+                }, 1000);
+            }
         });
 
         marker.addListener('filter', function() {
@@ -308,12 +310,10 @@ function initMap() {
         marker.addListener('click', function() {
             var self = this;
             var locID = findWithAttr(viewModel.locations(), 'name', self.title);
-            self.setAnimation(google.maps.Animation.BOUNCE);
-            viewModel.toggleLocInfoPane(locID);
-            setTimeout(function() {
-                self.setAnimation(null);
-            }, 1000);
+            viewModel.toggleLocInfoPane(viewModel.getLocation(locID));
+            self.bounce(1);
         });
+
 
         location.marker = marker;
         viewModel.markers.push(marker);
