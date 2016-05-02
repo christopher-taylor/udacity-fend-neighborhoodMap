@@ -225,7 +225,7 @@ var ViewModel = function() {
 
     this.filter = function() {
         // If this is a valid filter tag
-        if ($.inArray(self.activeFilter(), self.filterTags) != -1 && self.activeFilter != "") {
+        if ($.inArray(self.activeFilter(), self.filterTags) != -1 && self.activeFilter() != "") {
             self.markers.forEach(function(marker) {
                 google.maps.event.trigger(marker, 'filter');
             });
@@ -243,6 +243,10 @@ var ViewModel = function() {
             name: 'filterTagList',
             source: substringMatcher(self.filterTags)
         });
+        $('#filter-box').bind('typeahead:select', function(ev, suggestion) {
+           console.log('Selection: ' + suggestion);
+           self.activeFilter(suggestion)
+       });
         $('.typeahead.input-sm').siblings('input.tt-hint').addClass('hint-small');
         $('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
     };
